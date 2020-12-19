@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-${LAN_INTERFACE?"Need to set LAN_INTERFACE"}
-${CONF_FILE?"Need to set CONF_FILE"}
+if [ -z "$LAN_INTERFACE" ]
+then
+      echo "LAN_INTERFACE not set" && exit 1
+fi
+if [ -z "$CONF_FILE" ]
+then
+      echo "CONF_FILE not set" && exit 1
+fi
 
 mkdir -p /dev/net
 mknod /dev/net/tun c 10 200
