@@ -20,7 +20,7 @@ services:
         environment:
             - LAN_INTERFACE=eth1    # The adapter the `external_net` appears as to the container (eth0 is taken by the default network)
             - CONF_FILE=conf.ovpn   # Name of the ovpn config file to launch
-            - FORWARD_PORTS="192.168.1.5:80:TCP 192.168.1.8:3389:TCP 192.168.1.3:25565:UDP"
+            - FORWARD_PORTS=192.168.1.5:80:TCP 192.168.1.8:3389:TCP 192.168.1.3:25565:UDP
         restart: unless-stopped
     dhcp:
         image: networkboot/dhcpd            # Optionally add a DHCP server to the network
