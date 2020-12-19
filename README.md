@@ -14,13 +14,13 @@ services:
         volumes:
             - config:/etc/openvpn:ro
         networks:
-            default:
-            external_net:
-                ipv4_address: 192.168.1.254     # The IP address which will be used as the router
+            default:                            # Use default network for Internet; to connect to OpenVPN server
+            external_vlan:
+                ipv4_address: 192.168.1.254     # The IP address this container will use on the VLAN
         environment:
-            - LAN_INTERFACE=eth1    # The adapter the `external_net` appears as to the container (eth0 is taken by the default network)
+            - LAN_INTERFACE=eth1    # The adapter the `external_vlan` appears as to the container (eth0 will be taken by the default network)
             - CONF_FILE=conf.ovpn   # Name of the ovpn config file to launch
-            - FORWARD_PORTS=192.168.1.5:80:TCP 192.168.1.8:3389:TCP 192.168.1.3:25565:UDP
+            - FORWARD_PORTS=192.168.1.5:80:TCP 192.168.1.8:3389:TCP 192.168.1.3:25565:UDP   # List in format IP:PORT:PROTO
         restart: unless-stopped
     dhcp:
         image: networkboot/dhcpd            # Optionally add a DHCP server to the network
@@ -29,10 +29,10 @@ services:
         network_mode: "service:openvpn"
         restart: unless-stopped
 networks:
-    external_net:
+    external_vlan:               
         driver: macvlan
         driver_opts:
-            parent: eth1        # The adapter the LAN is connected to on the docker host
+            parent: eth1        # The adapter the VLAN is connected to on the docker host
         ipam:
             config:
                 - subnet: 192.168.1.1/24
