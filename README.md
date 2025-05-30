@@ -2,16 +2,16 @@
 
 A docker image to provide a NAT router to a VLAN using an OpenVPN tunnel as the upstream connection.
 
-Image x86: registry.reitetschlaeger.com/latest
+Image x86: registry.reitetschlaeger.com/docker-openvpn-router:latest
 
-Image arm: registry.reitetschlaeger.com/arm64
+Image arm: registry.reitetschlaeger.com/docker-openvpn-router:arm64
 
 ## Usage
 
 ```
 services:
     openvpn:
-        image: registry.reitetschlaeger.com:latest
+        image: registry.reitetschlaeger.com/docker-openvpn-router:latest
         cap_add:
             - NET_ADMIN                         # Required so that the container can run iptables rules
         volumes:
