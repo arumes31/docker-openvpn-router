@@ -2,9 +2,9 @@
 
 A docker image to provide a NAT router to a VLAN using an OpenVPN tunnel as the upstream connection.
 
-Image x86: registry.reitetschlaeger.com/docker-openvpn-router:latest
+Image amd64: registry.reitetschlaeger.com/docker-openvpn-router:latest
 
-Image arm: registry.reitetschlaeger.com/docker-openvpn-router:arm64
+Image arm64: registry.reitetschlaeger.com/docker-openvpn-router:arm64
 
 ## Usage
 
