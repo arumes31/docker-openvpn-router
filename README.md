@@ -1,16 +1,16 @@
 # Docker OpenVPN Router
 
-[![Build status](https://github.com/jacob-pro/docker-openvpn-router/actions/workflows/docker.yml/badge.svg)](https://github.com/jacob-pro/docker-openvpn-router/actions)
-
 A docker image to provide a NAT router to a VLAN using an OpenVPN tunnel as the upstream connection.
+
+Image x86: registry.reitetschlaeger.com/latest
+Image arm: registry.reitetschlaeger.com/arm64
 
 ## Usage
 
 ```
-version: '3.7'
 services:
     openvpn:
-        image: ghcr.io/jacob-pro/openvpn-router:latest
+        image: registry.reitetschlaeger.com:latest
         cap_add:
             - NET_ADMIN                         # Required so that the container can run iptables rules
         volumes:
