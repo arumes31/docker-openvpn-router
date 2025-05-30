@@ -24,8 +24,8 @@ apply_iptables() {
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Added FORWARD rule (tun0 -> $LAN_INTERFACE)" ||
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Failed to add FORWARD rule (tun0 -> $LAN_INTERFACE)"
     iptables -A FORWARD -i $LAN_INTERFACE -o tun0 -j ACCEPT &&
-        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Added FORWARD rule ($LAN-> tun0)" ||
-        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Failed to add FORWARD rule ($LAN-> tun0)"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Added FORWARD rule ($LAN_INTERFACE-> tun0)" ||
+        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Failed to add FORWARD rule ($LAN_INTERFACE-> tun0)"
 
     for PORT_TUPLE in $FORWARD_PORTS; do
         SPACED=(${PORT_TUPLE//:/ })

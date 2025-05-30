@@ -7,6 +7,10 @@ RUN apt-get update && apt-get install -y \
     iptables \
     iproute2 \
     iputils-ping \
+    curl \
+    wget \
+    nano \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy scripts

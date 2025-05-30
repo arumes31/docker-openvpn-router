@@ -1,9 +1,7 @@
 #!/bin/bash
 # run.sh - Manage OpenVPN and NAT rules
 
-# Ensure output goes to stdout and stderr
 exec 1>&1 2>&1
-
 echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Script started"
 
 # Validate environment variables
