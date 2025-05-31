@@ -1,12 +1,30 @@
 #!/bin/bash
 # healthcheck.sh - Check VPN and NAT rules, attempt to fix and recheck if needed
 
-exec 1>>/var/log/healthcheck.log 2>&1
+# Redirect output to stdout/stderr for Docker logs
+exec 1>&1 2>&1
+
+# Enable command tracing
+#set -x
 
 LAN_INTERFACE="${LAN_INTERFACE:-eth0}"
 FORWARD_PORTS="${FORWARD_PORTS:-}"
 
-# Function to apply iptables rules (similar to up.sh)
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: healthcheck.sh started, LAN_INTERFACE=$LAN_INTERFACE, FORWARD_PORTS=$FORWARD_PORTS"
+
+# Log system state
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Network interfaces:"
+ip link show
+ip addr show
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: OpenVPN process status:"
+ps aux | grep openvpn || true
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Current iptables rules:"
+iptables -L -v -n --line-numbers
+iptables -t nat -L -v -n --line-numbers
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Recent OpenVPN logs:"
+tail -n 20 /var/log/openvpn.log || true
+
+# Function to apply iptables rules
 apply_iptables() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Attempting to fix iptables rules"
     iptables -t nat -F && echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Cleared NAT table" ||
@@ -63,9 +81,20 @@ check_iptables() {
     return $errors
 }
 
+# Check OpenVPN process
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Checking OpenVPN process"
+openvpn_pid=$(pgrep openvpn)
+if [ -z "$openvpn_pid" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: No OpenVPN process running"
+    cat /var/log/openvpn.log
+    exit 1
+fi
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: OpenVPN running, pid=$openvpn_pid"
+
 # Check tun0 interface with retries
 for i in {1..3}; do
     if ip link show tun0 >/dev/null 2>&1; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: tun0 interface found"
         break
     fi
     echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: tun0 not ready, retry $i"
@@ -73,12 +102,16 @@ for i in {1..3}; do
 done
 if ! ip link show tun0 >/dev/null 2>&1; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: tun0 interface not present"
+    cat /var/log/openvpn.log
     exit 1
 fi
 
 # Check VPN connectivity
-if ! ping -c 3 -I tun0 8.8.8.8 >/dev/null 2>&1; then
+echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Pinging 8.8.8.8 via tun0"
+ping -c 3 -I tun0 8.8.8.8
+if [ $? -ne 0 ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Ping via tun0 failed"
+    cat /var/log/openvpn.log
     exit 1
 fi
 
