@@ -7,22 +7,10 @@ exec 1>&1 2>&1
 # Enable command tracing
 #set -x
 
-LAN_INTERFACE="${LAN_INTERFACE:-eth0}"
+LAN_INTERFACE="${LAN_INTERFACE:-eth1}"
 FORWARD_PORTS="${FORWARD_PORTS:-}"
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: healthcheck.sh started, LAN_INTERFACE=$LAN_INTERFACE, FORWARD_PORTS=$FORWARD_PORTS"
-
-# Log system state
-echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Network interfaces:"
-ip link show
-ip addr show
-echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: OpenVPN process status:"
-ps aux | grep openvpn || true
-echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Current iptables rules:"
-iptables -L -v -n --line-numbers
-iptables -t nat -L -v -n --line-numbers
-echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: Recent OpenVPN logs:"
-tail -n 20 /var/log/openvpn.log || true
 
 # Function to apply iptables rules
 apply_iptables() {

@@ -8,7 +8,7 @@ exec 1>&1 2>&1
 #set -x
 
 # Use same LAN_INTERFACE and FORWARD_PORTS as run.sh
-LAN_INTERFACE="${LAN_INTERFACE:-eth0}"
+LAN_INTERFACE="${LAN_INTERFACE:-eth1}"
 FORWARD_PORTS="${FORWARD_PORTS:-}"
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') DEBUG: up.sh started, LAN_INTERFACE=$LAN_INTERFACE, FORWARD_PORTS=$FORWARD_PORTS"
